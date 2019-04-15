@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 public class HoldingObjects : MonoBehaviour
 {
     public TMP_InputField inputField;
-    public string inputFieldText;
+    public string inputFieldString;
 
 
     void Update()
     {
         if (Input.GetKeyDown("return"))
         {
-            inputFieldText = inputField.text;
+            inputFieldString = inputField.text;
             DontDestroyOnLoad(this.gameObject);
             SceneManager.LoadScene("MathDuelPoC"); 
         }
