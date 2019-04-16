@@ -3,90 +3,113 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
     public Timer timer;
     public TMP_InputField inputeAnswer;
-    public TextMeshProUGUI questions;
+    public TextMeshProUGUI questionsText;
     public TextMeshProUGUI playerOne;
     public TextMeshProUGUI playerTwo;
     public TextMeshProUGUI yourAnswer;
-    public float restartGame;
-    int[] numbers;
+    public Ranks ranks;
+    public Questions questions;
+    public AIController aiController;
     int rightAnswer;
     int answer;
     List<int> yourAnswers;
-    int rightAnswerChecker;
-    public float restartTime;
+    public float restartTime = 10;
+    string currentDifficulty;
+    float playerOneAnswerTime;
+    public float playerTwoAnswerTime;
+    
+
 
     private void Awake()
     {
         yourAnswers = new List<int>();
         timer.countDown = 15;
-        questions.text = playerOne.text + " VS " + playerTwo.text;
+        questionsText.text = playerOne.text + " VS " + playerTwo.text;
         yourAnswer.enabled = false;
-        rightAnswerChecker = 1;
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene("Menu");
         EventSystem.current.SetSelectedGameObject(inputeAnswer.gameObject, null);
         inputeAnswer.OnPointerClick(new PointerEventData(EventSystem.current));
 
-        if (timer.isGameStarted && Questions.canRandomize)
+        if (timer.isGameStarted && questions.canRandomize)
         {
             NewQuestion();
             inputeAnswer.text = "";
         }
 
-        if(Questions.rounds >= 6 && timer.isGameStarted)
+        if(questions.rounds >= 6 && timer.isGameStarted)
         {
             RestartGame();
         }
 
-        if (Input.GetKeyDown("return"))
+        if (Input.GetKeyDown("return") && timer.isGameStarted)
         {
-            RightAnswer();
-            Answer();
-            DrawOutTextRightOrWrong();
+            playerOneAnswerTime = timer.countDown;
+            if(ranks.yourElo < 1650)
+            {
+                rightAnswer = questions.rightAnswerEasy;
+                Debug.Log(rightAnswer);
+                Answer();
+                DrawOutTextWinnerText();
+            }
+
+            if(ranks.yourElo >= 1650  && ranks.yourElo < 1800)
+            {
+                rightAnswer = questions.rightAnswerMedium;
+                Answer();
+                DrawOutTextWinnerText();
+            }
+
+            if(ranks.yourElo >= 1800)
+            {
+                rightAnswer = questions.rightAnswerHard;
+                Answer();
+                DrawOutTextWinnerText();
+            }
         }
     }
 
-    public void RightAnswer()
-    {
-        rightAnswer = numbers[0] + numbers[1];
-    }
-
+   
     public void Answer()
     {
         yourAnswer.enabled = true;
-        answer = int.Parse(inputeAnswer.text);
+        answer = int.Parse(inputeAnswer.text); 
         if (rightAnswer == answer)
         {
-            rightAnswerChecker++;
-            yourAnswers.Add(rightAnswerChecker);
+            yourAnswers.Add(questions.rounds);
         }
     }
     
-    public void DrawOutTextRightOrWrong()
+    public void DrawOutTextWinnerText()
     {
         if (answer == rightAnswer)
         {
-            yourAnswer.text = "Your answer was right" + " " + answer.ToString();
+            yourAnswer.text = playerOne.name + " Right answer" + " " + "Your answer time was" + " " + playerOneAnswerTime.ToString("F1") + "s";
         }
-        if (answer != rightAnswer)
+        if (aiController.aiAnswers == rightAnswer)
         {
-            yourAnswer.text = "Your answer was wrong" + " " + answer.ToString() + ", " + "The right answer was" + " " + rightAnswer.ToString();
+            questionsText.text = playerTwo.name + " Right answer" + " " + "Answer time was" + " " + playerTwoAnswerTime.ToString("F1") + "s";
         }
-
+        if (answer != rightAnswer) yourAnswer.text = playerOne.name + " " + "Wrong answer";
+        if (aiController.aiAnswers != rightAnswer) questionsText.text = playerTwo.name + " " + "Wrong answer";
     }
     
     public void RestartGame()
     {
-        Questions.rounds = 0;
-        rightAnswerChecker = 0;
-        questions.text = "You had" + " " + yourAnswers.Count.ToString() + " " + "out of 5";
+        if(yourAnswers.Count >= 3) ranks.CheckYourRank(true, false);
+        if (yourAnswers.Count < 3) ranks.CheckYourRank(false, true);
+        aiController.CheckAi();
+        questions.rounds = 0;
+        questionsText.text = "You had" + " " + yourAnswers.Count.ToString() + " " + "out of 5";
         timer.isGameStarted = false;
         timer.countDown = restartTime;
         yourAnswers.Clear();
@@ -94,9 +117,21 @@ public class GameController : MonoBehaviour
 
     public void NewQuestion()
     {
-        numbers = Questions.Randomize();
-        questions.text = numbers[0].ToString() + " + " + numbers[1].ToString() + " = ?";
-        Questions.canRandomize = false;
+        aiController.counter = 0;
+        if (ranks.yourElo < 1650)
+        {
+            questions.QuestionEasy();
+            questionsText.text = questions.questionEasy;
+        }
+        if (ranks.yourElo >= 1650 && ranks.yourElo < 1800)
+        {
+            questions.QuestionMedium();
+            questionsText.text = questions.questionMedium;
+        }
+        if (ranks.yourElo >= 1800)
+        {
+            questions.QuestionHard();
+            questionsText.text = questions.questionHard;
+        }
     }
-
 }

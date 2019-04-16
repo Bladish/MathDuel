@@ -8,11 +8,12 @@ public class PlayerName : MonoBehaviour
     public TextMeshProUGUI playerName;
     void Start()
     {
-        if(dontDestroyOnLoad == null)
+        dontDestroyOnLoad = FindObjectOfType<HoldingObjects>();
+        if (dontDestroyOnLoad == null)
         {
+            Debug.Log("No player information from menu");
             return;
         }
-        dontDestroyOnLoad = FindObjectOfType<HoldingObjects>();
-        playerName.text = dontDestroyOnLoad.inputFieldString;
+        playerName.text = dontDestroyOnLoad.inputFieldPlayerString;
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 public class Timer : MonoBehaviour
 {
+    public Questions questions;
+    public AIController aiController;
     public TextMeshProUGUI yourAnswer;
     public TextMeshProUGUI timerText;
     public float countDown;
@@ -28,7 +30,8 @@ public class Timer : MonoBehaviour
             countDown = 5f;
             timerText.text = countDown.ToString("F0");
             isGameStarted = true;
-            Questions.canRandomize = true;
+            questions.canRandomize = true;
+            aiController.canAiTimerStart = true;
             yourAnswer.enabled = false;
         }
 
