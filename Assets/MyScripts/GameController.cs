@@ -76,23 +76,24 @@ public class GameController : MonoBehaviour
 
         if (answer == stateMachine.rightAnswer)
         {
-            yourAnswer.text = playerOne.name + " Right answer" + " " + "Your answer time was" + " " + playerOneAnswerTime.ToString("F1") + "s";
+            if (RandomNumber() <= 80) yourAnswer.text = playerOne.text + " Awesome" + " " + " Time" + " " + playerOneAnswerTime.ToString("F1") + "s";
+            if (RandomNumber() > 80) yourAnswer.text = playerTwo.text + " DONT YOU HAVE A CALCULATOR" + " " + "Time" + " " + playerOneAnswerTime.ToString("F1") + "s";
         }
 
         if (aiController.aiAnswers == stateMachine.rightAnswer)
         {
-            
-            questionsText.text = playerTwo.name + " Right answer" + " " + "Answer time was" + " " + playerTwoAnswerTime.ToString("F1") + "s";
+            questionsText.text = playerTwo.text + " Awesome" + " " + "Time" + " " + playerTwoAnswerTime.ToString("F1") + "s";
         }
 
         if (answer != stateMachine.rightAnswer)
         {
-            yourAnswer.text = playerOne.name + " " + "Wrong answer";
+            if (RandomNumber() >= 30) yourAnswer.text = playerOne.text + " YELLS " + " EVIL MATH";
+            if (RandomNumber() < 30) yourAnswer.text = playerOne.text + " YELLS " + " I WISH I WAS AS GOOD AS TORBJÖRN";
         }
 
         if (aiController.aiAnswers != stateMachine.rightAnswer)
         {
-            questionsText.text = playerTwo.name + " " + "Wrong answer";
+            questionsText.text = playerTwo.text + "YELLS " + "EVIL MATH ";
         }
         timer.ShowingAnswers();
     }
@@ -111,5 +112,11 @@ public class GameController : MonoBehaviour
         questionsText.text = stateMachine.questionString;
         timer.NewQuestionTime();
         yourAnswer.enabled = false;
+    }
+
+    public int RandomNumber()
+    {
+        int number = Random.Range(1, 100);
+        return number;
     }
 }
