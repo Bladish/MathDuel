@@ -7,8 +7,14 @@ using UnityEngine.EventSystems;
 
 public class MenuInpute : MonoBehaviour
 {
+    private RandomNamesForAi randomNamesForAi;
     public TMP_InputField inputFieldPlayerName;
     public HoldingObjects holdingObjects;
+
+    private void Start()
+    {
+        randomNamesForAi = GetComponent<RandomNamesForAi>();
+    }
 
     void Update()
     {
@@ -17,8 +23,9 @@ public class MenuInpute : MonoBehaviour
         inputFieldPlayerName.OnPointerClick(new PointerEventData(EventSystem.current));
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            holdingObjects.playerTwoName = randomNamesForAi.namePlayerTwo;
             holdingObjects.inputFieldPlayerString = inputFieldPlayerName.text;
-            SceneManager.LoadScene("MathDuelPoC");
+            SceneManager.LoadScene("MathDuel");
         }
     }
 }

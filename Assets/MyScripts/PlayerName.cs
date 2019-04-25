@@ -5,15 +5,16 @@ using TMPro;
 public class PlayerName : MonoBehaviour
 {
     HoldingObjects dontDestroyOnLoad;
-    public TextMeshProUGUI playerName;
-    void Start()
+    public TextMeshProUGUI playerOneName;
+    public TextMeshProUGUI playerTwoName;
+    void Awake()
     {
         dontDestroyOnLoad = FindObjectOfType<HoldingObjects>();
         if (dontDestroyOnLoad == null)
         {
-            Debug.Log("No player information from menu");
             return;
         }
-        playerName.text = dontDestroyOnLoad.inputFieldPlayerString;
+        playerOneName.text = dontDestroyOnLoad.inputFieldPlayerString;
+        playerTwoName.text = dontDestroyOnLoad.playerTwoName;
     }
 }

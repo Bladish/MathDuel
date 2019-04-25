@@ -7,6 +7,7 @@ using UnityEngine;
 public class HoldingObjects : MonoBehaviour
 {
     public string inputFieldPlayerString;
+    public string playerTwoName;
 
     private void Update()
     {
