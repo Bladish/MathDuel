@@ -29,7 +29,7 @@ public class AIController : MonoBehaviour
         if(aiCurrentElo < easy &&  randNumber > 60)
         {
             aiAnswers = stateMachine.rightAnswer;
-            gameController.playerTwoAnswerTime = RandomTime() + 0.3f;
+            gameController.playerTwoAnswerTime = RandomTime() + 0.5f;
         }
 
         if (aiCurrentElo > medium && aiCurrentElo < hard && randNumber > 40)
@@ -54,7 +54,7 @@ public class AIController : MonoBehaviour
     public float RandomTime()
     {
         float randomTime;
-        randomTime = Random.Range(0.4f, 4.5f);
+        randomTime = Random.Range(0.4f, 4.1f);
         return randomTime;
     }
 }
