@@ -76,8 +76,8 @@ public class GameController : MonoBehaviour
 
         if (answer == stateMachine.rightAnswer)
         {
-            if (RandomNumber() <= 80) yourAnswer.text = playerOne.text + " Awesome" + " " + " Time" + " " + playerOneAnswerTime.ToString("F1") + "s";
-            if (RandomNumber() > 80) yourAnswer.text = playerTwo.text + " DONT YOU HAVE A CALCULATOR" + " " + "Time" + " " + playerOneAnswerTime.ToString("F1") + "s";
+            if (RandomNumber() <= 90) yourAnswer.text = playerOne.text + " Awesome" + " " + " Time" + " " + playerOneAnswerTime.ToString("F1") + "s";
+            if (RandomNumber() > 90) yourAnswer.text = playerTwo.text + " DONT YOU HAVE A CALCULATOR" + " " + "Time" + " " + playerOneAnswerTime.ToString("F1") + "s";
         }
 
         if (aiController.aiAnswers == stateMachine.rightAnswer)
