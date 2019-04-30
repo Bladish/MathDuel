@@ -15,7 +15,7 @@ public class RandomNamesForAi : MonoBehaviour
 
     public void AddNamesFromTextFile()
     {
-        string path = "Assets/PlaceHolders/Names.txt";
+        string path = "Assets/Resources/Names.txt";
         names = File.ReadAllLines(path);
     }
 

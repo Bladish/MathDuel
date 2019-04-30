@@ -29,19 +29,19 @@ public class AIController : MonoBehaviour
         if(aiCurrentElo < easy &&  randNumber > 60)
         {
             aiAnswers = stateMachine.rightAnswer;
-            gameController.playerTwoAnswerTime = RandomTime() + 0.5f;
+            gameController.playerTwoAnswerTime = gameController.playerTwoAnswerTime + 0.5f;
         }
 
         if (aiCurrentElo > medium && aiCurrentElo < hard && randNumber > 40)
         {
             aiAnswers = stateMachine.rightAnswer;
-            gameController.playerTwoAnswerTime = RandomTime() + 0.8f;
+            gameController.playerTwoAnswerTime = gameController.playerTwoAnswerTime + 0.8f;
         }
 
         if (aiCurrentElo > hard && randNumber > 20)
         {
             aiAnswers = stateMachine.rightAnswer;
-            gameController.playerTwoAnswerTime = RandomTime() + 0.9f; 
+            gameController.playerTwoAnswerTime = gameController.playerTwoAnswerTime + 0.9f; 
         }
         
     }

@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 public class Timer : MonoBehaviour
 {
-    public TextMeshProUGUI yourAnswer;
     public TextMeshProUGUI timerText;
     public float newQuestionTime;
     public float showingAnswerTime;

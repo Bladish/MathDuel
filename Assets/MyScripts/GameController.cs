@@ -7,19 +7,20 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
+    private TextHandler textHandler;
     private Ranks ranks;
     private StateMachine stateMachine;
     private Randomize randomize;
     private AIController aiController;
-    private int answer;
+    private GameObject dontDestroyOnLoadObjects;
+    private WinCondition winCondition;
     public Timer timer;
+    public GameObject inputeText;
     public TMP_InputField inputeAnswer;
-    public TextMeshProUGUI questionsText;
-    public TextMeshProUGUI playerOne;
-    public TextMeshProUGUI playerTwo;
-    public TextMeshProUGUI yourAnswer;
+    public int rounds;
     public float playerOneAnswerTime;
     public float playerTwoAnswerTime;
+    private int answer;
 
 
     private void Start()
@@ -29,15 +30,21 @@ public class GameController : MonoBehaviour
         ranks = GetComponent<Ranks>();
         stateMachine = GetComponent<StateMachine>();
         aiController = GetComponent<AIController>();
+        winCondition = GetComponent<WinCondition>();
+        textHandler = GetComponent<TextHandler>();
         timer.newGameTime = 10;
-        questionsText.text = playerOne.text + " VS " + playerTwo.text;
-        yourAnswer.enabled = false;
+        dontDestroyOnLoadObjects = GameObject.Find("DontDestroyOnLoadObjects");
+
     }
 
     private void Update()
     {
         timer.MyUpdate();
-        if (Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene("Menu");
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("Menu");
+            Destroy(dontDestroyOnLoadObjects);
+        } 
         EventSystem.current.SetSelectedGameObject(inputeAnswer.gameObject, null);
         inputeAnswer.OnPointerClick(new PointerEventData(EventSystem.current));
         if (Input.GetKeyDown(KeyCode.Return) && inputeAnswer.ToString() != System.String.Empty) Answer();
@@ -58,65 +65,44 @@ public class GameController : MonoBehaviour
         {
             DrawOutTextWinnerText();  
             timer.isNewQuestionTime = false;
-        } 
+        }
+        
+        if(timer.newQuestionTime <= 0 && rounds >= 5)
+        {
+            
+        }
     }
 
    
     public void Answer()
     {
+        iTween.PunchScale(inputeText, new Vector3(4,4,0), 0.8f);
         answer = int.Parse(inputeAnswer.text);
         playerOneAnswerTime = 5 - timer.newQuestionTime;
         aiController.CheckAi();
+        winCondition.EachRound(playerOneAnswerTime, answer, rounds, stateMachine.rightAnswer, textHandler.playerOne.name);
+        winCondition.EachRound(playerTwoAnswerTime, aiController.aiAnswers, rounds, stateMachine.rightAnswer, textHandler.playerTwo.name);
+        textHandler.PlayerOneAnswer();
     }
     
     public void DrawOutTextWinnerText()
     {
-        questionsText.fontSize = 38;
-        yourAnswer.enabled = true;
-
-        if (answer == stateMachine.rightAnswer)
-        {
-            if (RandomNumber() <= 90) yourAnswer.text = playerOne.text + " Awesome" + " " + " Time" + " " + playerOneAnswerTime.ToString("F1") + "s";
-            if (RandomNumber() > 90) yourAnswer.text = playerTwo.text + " DONT YOU HAVE A CALCULATOR" + " " + "Time" + " " + playerOneAnswerTime.ToString("F1") + "s";
-        }
-
-        if (aiController.aiAnswers == stateMachine.rightAnswer)
-        {
-            questionsText.text = playerTwo.text + " Awesome" + " " + "Time" + " " + playerTwoAnswerTime.ToString("F1") + "s";
-        }
-
-        if (answer != stateMachine.rightAnswer)
-        {
-            if (RandomNumber() >= 30) yourAnswer.text = playerOne.text + " YELLS " + " EVIL MATH";
-            if (RandomNumber() < 30) yourAnswer.text = playerOne.text + " YELLS " + " I WISH I WAS AS GOOD AS TORBJÖRN";
-        }
-
-        if (aiController.aiAnswers != stateMachine.rightAnswer)
-        {
-            questionsText.text = playerTwo.text + "YELLS " + "EVIL MATH ";
-        }
+        winCondition.RoundWinner();
         timer.ShowingAnswers();
+        textHandler.EnablePlayerAnswerText();
     }
     
     public void RestartGame()
     {
-        if (stateMachine.rightAnswer == answer) ranks.CheckYourRank(true, false);
-        if (stateMachine.rightAnswer != answer) ranks.CheckYourRank(false, true);
         NewQuestion();
     }
 
     public void NewQuestion()
     {
         stateMachine.CheckState(ranks.yourElo, randomize.RandomizeArr());
-        questionsText.fontSize = 50;
-        questionsText.text = stateMachine.questionString;
+        textHandler.NewQuestion(stateMachine.questionString);
         timer.NewQuestionTime();
-        yourAnswer.enabled = false;
-    }
-
-    public int RandomNumber()
-    {
-        int number = Random.Range(1, 100);
-        return number;
+        playerTwoAnswerTime = aiController.RandomTime();
+        rounds++;
     }
 }
